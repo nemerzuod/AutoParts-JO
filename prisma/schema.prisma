@@ -1,0 +1,44 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Category {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  nameAr    String
+  parts     Part[]
+  createdAt DateTime @default(now())
+}
+
+model Part {
+  id          Int             @id @default(autoincrement())
+  name        String
+  nameAr      String
+  partNumber  String          @unique
+  brand       String
+  description String?
+  price       Float           @default(0)
+  quantity    Int             @default(0)
+  minQuantity Int             @default(5)
+  branch      String          @default("Amman")
+  category    Category        @relation(fields: [categoryId], references: [id])
+  categoryId  Int
+  fitments    VehicleFitment[]
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+}
+
+model VehicleFitment {
+  id       Int    @id @default(autoincrement())
+  make     String
+  model    String
+  yearFrom Int
+  yearTo   Int
+  part     Part   @relation(fields: [partId], references: [id], onDelete: Cascade)
+  partId   Int
+}
